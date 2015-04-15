@@ -1,0 +1,11 @@
+#box{
+width:295px;
+height:210px;
+border: none;
+}
+
+#box input{
+ width: 81px;
+ height: 81px;
+ font-size: 70px;
+ }

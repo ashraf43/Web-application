@@ -1,0 +1,348 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Screen Constructor</title>
+  <link type="text/css" rel="stylesheet" href="stylesheet.css"/>
+  <style>
+    #login-screen, #menu-screen, #gameplay-screen, #credits-screen, #statistics-screen {
+      display: none
+    }
+  </style>
+
+</head>
+
+<body>
+
+<div id="loading-screen">
+  Loading ...
+</div>
+
+<div id="statistics-screen">
+  <p id="player"></p>
+  <p id="computer"></p>
+  <p id="ties"></p>
+  <ul style="list-style-type:none">
+  <li><button id="menu-return-btn">Main Menu</button></li>
+</div>
+
+<div id="login-screen">
+  Username: <input id="login-username-box" type="text" size="20" /> <br>
+  Password: <input id="login-password-box" type="password" size="20" /> <br>
+  <button id="login-submit-btn">Login</button>
+</div>
+
+
+<div id="menu-screen">
+  <p>Main menu</p>
+  <ul style="list-style-type:none">
+    <li><button id="menu-Gameplay-btn">Play Game</button></i>
+    <li><button id="menu-logout-btn">Logout</button></li>
+    <li><button id="menu-credits-btn">Game Credits</button></li>
+    <li><button id="menu-statistics-btn">Your Stats</button></li>
+  </ul>
+</div>
+
+<div id="gameplay-screen">
+  <p>Gameplay</p>
+  <ul style="list-style-type:none">
+  	  <div id="box">
+        <input type="button" id = "btn1" onclick="clickbutt('btn1')"/>
+        <input type="button" id = "btn2" onclick="clickbutt('btn2')"/>
+        <input type="button" id = "btn3" onclick="clickbutt('btn3')"/>
+        <input type="button" id = "btn4" onclick="clickbutt('btn4')"/>
+        <input type="button" id = "btn5" onclick="clickbutt('btn5')"/>
+        <input type="button" id = "btn6" onclick="clickbutt('btn6')"/>
+        <input type="button" id = "btn7" onclick="clickbutt('btn7')"/>
+        <input type="button" id = "btn8" onclick="clickbutt('btn8')"/>
+        <input type="button" id = "btn9" onclick="clickbutt('btn9')"/>
+      </div>
+  	  <li><button id="menu-quit-btn">Quit</button></li>
+  </ul>
+</div>
+
+<div id="credits-screen">
+  <p>sourced from Dr.Turner Completed by Ashraf Dauodi</p>
+  <ul style="list-style-type:none">
+  <li><button id="menu-return2-btn">Main Menu</button></li>
+  </ul>
+</div>
+
+<script>
+// Create one global object to hold all application data and logic.
+var app = { 
+  screens: {},   // application screens
+  Screen: null,   // screen constructor
+  xNumberOfWins: 0, //counts the number of player wins
+  oNumberOfWins: 0, //counts the number of computer wins
+  numberOfTies: 0, //counts the number of ties
+  botMove: brain(),//receives the position of were the bot will move
+  tieCounter: 0 //provents game from locking up when computer runs out of moves
+
+};
+
+//Refreshes the statistical values
+function stats(){
+document.getElementById("player").innerHTML = "Player wins: " + app.xNumberOfWins;
+document.getElementById("computer").innerHTML = "Cumputer wins: " + app.oNumberOfWins;
+document.getElementById("ties").innerHTML = "Ties: " + app.numberOfTies;
+}
+// Start the definition of the Screen constructor.
+app.Screen = function(name) {
+  this.name = name;
+};
+
+// Define a "static" variable to refer to the currently active screen.
+app.Screen.currentScreen = null;
+
+// Define a function that Screen instances inherit.
+app.Screen.prototype.getDiv = function() {
+  return document.getElementById(this.name + '-screen');
+};
+
+app.Screen.prototype.show = function() {
+  if (app.Screen.currentScreen) {
+    app.Screen.currentScreen.hide();  // revised code
+  }
+  this.getDiv().style.display = 'block';
+  app.Screen.currentScreen = this;
+};
+
+// Define hide
+app.Screen.prototype.hide = function() {
+  if (app.Screen.currentScreen) {
+      this.getDiv().style.display = 'none';
+  }
+};
+//defines movement for Tic tac toe
+
+function clickbutt(btn){
+  winner();
+  document.getElementById(btn).value = "x";
+  document.getElementById(btn).disabled = true;
+  app.tieCounter += 1;
+  while(1){
+    if(document.getElementById(app.botMove).value != "o" && document.getElementById(app.botMove).value != "x"){
+      break;
+    }
+    if(app.tieCounter >= 8)
+  	{
+      break;
+    }
+    app.botMove = brain();
+  }
+  
+  document.getElementById(app.botMove).value = "o";
+  document.getElementById(app.botMove).disabled = true;
+  app.tieCounter += 1;
+  winner();
+}
+
+
+function winner(){
+if(
+document.getElementById("btn1").value == "x" &&
+document.getElementById("btn2").value == "x" &&
+document.getElementById("btn3").value == "x" ||
+document.getElementById("btn4").value == "x" &&
+document.getElementById("btn5").value == "x" &&
+document.getElementById("btn6").value == "x" ||
+document.getElementById("btn7").value == "x" &&
+document.getElementById("btn8").value == "x" &&
+document.getElementById("btn9").value == "x" ||
+document.getElementById("btn3").value == "x" &&
+document.getElementById("btn6").value == "x" &&
+document.getElementById("btn9").value == "x" ||
+document.getElementById("btn1").value == "x" &&
+document.getElementById("btn4").value == "x" &&
+document.getElementById("btn7").value == "x" ||
+document.getElementById("btn1").value == "x" &&
+document.getElementById("btn5").value == "x" &&
+document.getElementById("btn9").value == "x" ||
+document.getElementById("btn3").value == "x" &&
+document.getElementById("btn5").value == "x" &&
+document.getElementById("btn7").value == "x" ||
+document.getElementById("btn2").value == "x" &&
+document.getElementById("btn5").value == "x" &&
+document.getElementById("btn8").value == "x" 
+){
+ app.xNumberOfWins += 1;
+ alert("The Winner is X!");
+ reset();
+}
+else if(
+document.getElementById("btn1").value == "o" &&
+document.getElementById("btn2").value == "o" &&
+document.getElementById("btn3").value == "o" ||
+document.getElementById("btn4").value == "o" &&
+document.getElementById("btn5").value == "o" &&
+document.getElementById("btn6").value == "o" ||
+document.getElementById("btn7").value == "o" &&
+document.getElementById("btn8").value == "o" &&
+document.getElementById("btn9").value == "o" ||
+document.getElementById("btn3").value == "o" &&
+document.getElementById("btn6").value == "o" &&
+document.getElementById("btn9").value == "o" ||
+document.getElementById("btn1").value == "o" &&
+document.getElementById("btn4").value == "o" &&
+document.getElementById("btn7").value == "o" ||
+document.getElementById("btn1").value == "o" &&
+document.getElementById("btn5").value == "o" &&
+document.getElementById("btn9").value == "o" ||
+document.getElementById("btn3").value == "o" &&
+document.getElementById("btn5").value == "o" &&
+document.getElementById("btn7").value == "o" ||
+document.getElementById("btn2").value == "o" &&
+document.getElementById("btn5").value == "o" &&
+document.getElementById("btn8").value == "o" 
+){
+ app.oNumberOfWins += 1; //counts the number of computer wins
+ alert("The Winner is O!!!");
+ reset();
+}
+else if(
+document.getElementById("btn1").disabled == true &&
+document.getElementById("btn2").disabled == true &&
+document.getElementById("btn3").disabled == true &&
+document.getElementById("btn4").disabled == true &&
+document.getElementById("btn5").disabled == true &&
+document.getElementById("btn6").disabled == true &&
+document.getElementById("btn7").disabled == true &&
+document.getElementById("btn8").disabled == true &&
+document.getElementById("btn9").disabled == true 
+) {
+ app.numberOfTies += 1;
+ alert("The game is a Tie");
+ reset();
+}
+ stats();
+}
+
+function reset(){
+document.getElementById("btn1").value = "";
+document.getElementById("btn1").disabled = false;
+document.getElementById("btn2").value = ""; 
+document.getElementById("btn2").disabled = false;
+document.getElementById("btn3").value = "";
+document.getElementById("btn3").disabled = false;
+document.getElementById("btn4").value = ""; 
+document.getElementById("btn4").disabled = false;
+document.getElementById("btn5").value = ""; 
+document.getElementById("btn5").disabled = false;
+document.getElementById("btn6").value = "";
+document.getElementById("btn6").disabled = false;
+document.getElementById("btn7").value = "";
+document.getElementById("btn7").disabled = false; 
+document.getElementById("btn8").value = ""; 
+document.getElementById("btn8").disabled = false;
+document.getElementById("btn9").value = "";
+document.getElementById("btn9").disabled = false;
+app.tieCounter = 0;
+}
+function brain()
+{
+  var botmove =  Math.floor((Math.random() * 9) + 1);
+  
+  if(botmove === 1)
+  {
+   botmove = "btn1";
+  }
+  else if(botmove === 2)
+  {
+   botmove = "btn2";
+  }
+  else if(botmove === 3)
+  {
+   botmove = "btn3";
+  }
+  else if(botmove === 4)
+  {
+   botmove = "btn4";
+  }
+  else if(botmove === 5)
+  {
+   botmove = "btn5";
+  }
+  else if(botmove === 6)
+  {
+   botmove = "btn6";
+  }
+  else if(botmove === 7)
+  {
+   botmove = "btn7";
+  }
+  else if(botmove === 8)
+  {
+   botmove = "btn8";
+  }
+  else if(botmove === 9)
+  {
+   botmove = "btn9";
+  }
+  return botmove;
+}
+
+// At this point, definition of the Screen constructor is done.
+
+// Create the screen instances.
+app.screens.loading = new app.Screen('loading');
+app.screens.login = new app.Screen('login');
+app.screens.menu = new app.Screen('menu');
+app.screens.gameplay = new app.Screen('gameplay');
+app.screens.credits = new app.Screen('credits');
+app.screens.statistics = new app.Screen('statistics');
+
+// Initialize the currentScreen variable.
+app.Screen.currentScreen = app.screens.loading;
+
+// Set a click event handler for the login button in the login screen.
+document.getElementById('login-submit-btn').onclick = function() {
+var uName = document.getElementById('login-username-box').value;
+var upWord = document.getElementById('login-password-box').value;
+if(uName == "alice" && upWord == "1234")
+{
+  app.screens.menu.show();
+  
+} 
+else
+{
+  app.screens.login.show();
+}
+}
+
+// Set a click event handler for gameplay
+document.getElementById('menu-Gameplay-btn').onclick = function() {
+  app.screens.loading.show();
+  setTimeout(function() { app.screens.gameplay.show(); }, 2000);
+}
+
+document.getElementById('menu-credits-btn').onclick = function() {
+  app.screens.credits.show();
+}
+
+// Set a click event handler for the logout button in the menu screen.
+document.getElementById('menu-logout-btn').onclick = function() {
+  app.screens.login.show();
+}
+
+document.getElementById('menu-statistics-btn').onclick = function() {
+  app.screens.statistics.show();
+};
+
+document.getElementById('menu-quit-btn').onclick = function() {
+  app.screens.menu.show();
+};
+
+document.getElementById('menu-return-btn').onclick = function() {
+  app.screens.menu.show();
+};
+
+document.getElementById('menu-return2-btn').onclick = function() {
+  app.screens.menu.show();
+};
+// Use a timeout to simulate loading application data.
+setTimeout(function() { app.screens.login.show() }, 2000);
+
+</script>
+
+</body>
+</html>
